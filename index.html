@@ -9,14 +9,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --bg-color-dark: #121212;
-            --text-color-dark: #ffffff;
-            --link-bg-dark: #2c2c2c;
-            --link-hover-dark: #3c3c3c;
             --bg-color-light: #ffffff;
             --text-color-light: #000000;
             --link-bg-light: #f2f2f2;
             --link-hover-light: #e0e0e0;
+
+            --bg-color-dark: #121212;
+            --text-color-dark: #ffffff;
+            --link-bg-dark: #2c2c2c;
+            --link-hover-dark: #3c3c3c;
+
+            --bg-color-red-light: #ffebee;
+            --bg-color-red-dark: #b71c1c;
+            --text-color-red-light: #b71c1c;
+            --text-color-red-dark: #ffebee;
+
+            --bg-color-green-light: #e8f5e9;
+            --bg-color-green-dark: #1b5e20;
+            --text-color-green-light: #1b5e20;
+            --text-color-green-dark: #e8f5e9;
+
+            --bg-color-blue-light: #e3f2fd;
+            --bg-color-blue-dark: #0d47a1;
+            --text-color-blue-light: #0d47a1;
+            --text-color-blue-dark: #e3f2fd;
         }
 
         body {
@@ -120,9 +136,6 @@
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i>
-    </button>
     <div class="container">
         <div class="profile">
             <img src="https://avatars.githubusercontent.com/nubesurrealista" alt="Profile" class="profile-image">
@@ -149,6 +162,7 @@
                 <img src="https://simpleicons.org/icons/bluesky.svg" alt="Bluesky" style="width: 20px; height: 20px; vertical-align: middle;"> Bluesky (espejo)
             </a>
             <a href="https://nubesurrealista.github.io/Toots/" class="link"><i class="fas fa-link"></i> Toots</a>
+            <a href="https://github.com/nubesurrealista" class="link"><i class="fab fa-github"></i> GitHub</a>
         </div>
 
         <div class="visits">
@@ -167,6 +181,20 @@
         </div>
     </div>
 
+    <div class="theme-selector">
+        <label for="themeSelect">Seleccionar Tema:</label>
+        <select id="themeSelect" onchange="changeTheme(this.value)">
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+            <option value="red-light">Rojo Claro</option>
+            <option value="red-dark">Rojo Oscuro</option>
+            <option value="green-light">Verde Claro</option>
+            <option value="green-dark">Verde Oscuro</option>
+            <option value="blue-light">Azul Claro</option>
+            <option value="blue-dark">Azul Oscuro</option>
+        </select>
+    </div>
+
     <script>
         function toggleTheme() {
             const body = document.body;
@@ -178,17 +206,15 @@
 
         function applyTheme(theme) {
             const root = document.documentElement;
-            if (theme === 'dark') {
-                root.style.setProperty('--bg-color', 'var(--bg-color-dark)');
-                root.style.setProperty('--text-color', 'var(--text-color-dark)');
-                root.style.setProperty('--link-bg', 'var(--link-bg-dark)');
-                root.style.setProperty('--link-hover', 'var(--link-hover-dark)');
-            } else {
-                root.style.setProperty('--bg-color', 'var(--bg-color-light)');
-                root.style.setProperty('--text-color', 'var(--text-color-light)');
-                root.style.setProperty('--link-bg', 'var(--link-bg-light)');
-                root.style.setProperty('--link-hover', 'var(--link-hover-light)');
-            }
+            root.style.setProperty('--bg-color', `var(--bg-color-${theme})`);
+            root.style.setProperty('--text-color', `var(--text-color-${theme})`);
+            root.style.setProperty('--link-bg', `var(--link-bg-${theme})`);
+            root.style.setProperty('--link-hover', `var(--link-hover-${theme})`);
+        }
+
+        function changeTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            applyTheme(theme);
         }
 
         function loadPage() {
