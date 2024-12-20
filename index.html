@@ -7,48 +7,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@catppuccin/palette/css/catppuccin.css">
     <style>
         :root {
-            --bg-color-light: #ffffff;
-            --text-color-light: #000000;
-            --link-bg-light: #f2f2f2;
-            --link-hover-light: #e0e0e0;
+            --bg-color: var(--ctp-mocha-base);
+            --text-color: var(--ctp-mocha-text);
+            --link-bg: var(--ctp-mocha-surface0);
+            --link-hover: var(--ctp-mocha-surface2);
 
-            --bg-color-dark: #121212;
-            --text-color-dark: #ffffff;
-            --link-bg-dark: #2c2c2c;
-            --link-hover-dark: #3c3c3c;
+            --bg-color-mocha: var(--ctp-mocha-base);
+            --text-color-mocha: var(--ctp-mocha-text);
+            --link-bg-mocha: var(--ctp-mocha-surface0);
+            --link-hover-mocha: var(--ctp-mocha-surface2);
 
-            --bg-color-red-light: #ffebee;
-            --bg-color-red-dark: #b71c1c;
-            --text-color-red-light: #b71c1c;
-            --text-color-red-dark: #ffebee;
+            --bg-color-latte: var(--ctp-latte-base);
+            --text-color-latte: var(--ctp-latte-text);
+            --link-bg-latte: var(--ctp-latte-surface0);
+            --link-hover-latte: var(--ctp-latte-surface2);
 
-            --bg-color-green-light: #e8f5e9;
-            --bg-color-green-dark: #1b5e20;
-            --text-color-green-light: #1b5e20;
-            --text-color-green-dark: #e8f5e9;
+            --bg-color-frappe: var(--ctp-frappe-base);
+            --text-color-frappe: var(--ctp-frappe-text);
+            --link-bg-frappe: var(--ctp-frappe-surface0);
+            --link-hover-frappe: var(--ctp-frappe-surface2);
 
-            --bg-color-blue-light: #e3f2fd;
-            --bg-color-blue-dark: #0d47a1;
-            --text-color-blue-light: #0d47a1;
-            --text-color-blue-dark: #e3f2fd;
-
-            /* Nuevos temas */
-            --bg-color-pink-light: #fce4ec;
-            --bg-color-pink-dark: #880e4f;
-            --text-color-pink-light: #880e4f;
-            --text-color-pink-dark: #fce4ec;
-
-            --bg-color-purple-light: #f3e5f5;
-            --bg-color-purple-dark: #4a148c;
-            --text-color-purple-light: #4a148c;
-            --text-color-purple-dark: #f3e5f5;
-
-            --bg-color-orange-light: #fff3e0;
-            --bg-color-orange-dark: #e65100;
-            --text-color-orange-light: #e65100;
-            --text-color-orange-dark: #fff3e0;
+            --bg-color-macchiato: var(--ctp-macchiato-base);
+            --text-color-macchiato: var(--ctp-macchiato-text);
+            --link-bg-macchiato: var(--ctp-macchiato-surface0);
+            --link-hover-macchiato: var(--ctp-macchiato-surface2);
         }
 
         body {
@@ -135,7 +120,7 @@
             opacity: 1;
         }
 
-        .theme-toggle {
+        .theme-selector {
             position: fixed;
             top: 20px;
             right: 20px;
@@ -146,8 +131,11 @@
             cursor: pointer;
         }
 
-        .theme-toggle i {
+        .theme-selector select {
+            background: transparent;
             color: white;
+            border: none;
+            outline: none;
         }
     </style>
 </head>
@@ -200,32 +188,14 @@
     <div class="theme-selector">
         <label for="themeSelect">Seleccionar Tema:</label>
         <select id="themeSelect" onchange="changeTheme(this.value)">
-            <option value="light">Claro</option>
-            <option value="dark">Oscuro</option>
-            <option value="red-light">Rojo Claro</option>
-            <option value="red-dark">Rojo Oscuro</option>
-            <option value="green-light">Verde Claro</option>
-            <option value="green-dark">Verde Oscuro</option>
-            <option value="blue-light">Azul Claro</option>
-            <option value="blue-dark">Azul Oscuro</option>
-            <option value="pink-light">Rosa Claro</option>
-            <option value="pink-dark">Rosa Oscuro</option>
-            <option value="purple-light">Púrpura Claro</option>
-            <option value="purple-dark">Púrpura Oscuro</option>
-            <option value="orange-light">Naranja Claro</option>
-            <option value="orange-dark">Naranja Oscuro</option>
+            <option value="mocha">Mocha</option>
+            <option value="latte">Latte</option>
+            <option value="frappe">Frappe</option>
+            <option value="macchiato">Macchiato</option>
         </select>
     </div>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            body.setAttribute('data-theme', newTheme);
-            applyTheme(newTheme);
-        }
-
         function applyTheme(theme) {
             const root = document.documentElement;
             root.style.setProperty('--bg-color', `var(--bg-color-${theme})`);
@@ -289,9 +259,9 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            applyTheme(darkModeMediaQuery.matches ? 'dark' : 'light');
+            applyTheme(darkModeMediaQuery.matches ? 'mocha' : 'latte');
             darkModeMediaQuery.addEventListener('change', (e) => {
-                applyTheme(e.matches ? 'dark' : 'light');
+                applyTheme(e.matches ? 'mocha' : 'latte');
             });
 
             loadPage();
