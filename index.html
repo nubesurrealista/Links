@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Links</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -20,7 +20,7 @@
         }
 
         body {
-            font-family: 'Google Sans', sans-serif;
+            font-family: 'Comic Neue', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
@@ -60,6 +60,7 @@
         .profile-bio {
             color: #aaaaaa;
             margin-top: 10px;
+            text-align: left;
         }
 
         .links {
@@ -126,13 +127,26 @@
         <div class="profile">
             <img src="https://avatars.githubusercontent.com/nubesurrealista" alt="Profile" class="profile-image">
             <div class="profile-name">Ángel</div>
-            <div class="profile-bio">La Vida De Un Desarrollador 🤓</div>
+            <div class="profile-bio">
+                <p>¡Hola!</p>
+                <p>Mi nombre es Ángel, tengo 24 años y estos son mis links.</p>
+                <p>Me gusta hacer muchas cosas por eso necesitaba un lugar para agrupar mis links, y al final lo he encontrado ^^</p>
+                <p>Me gustan:</p>
+                <ul>
+                    <li>El anime y manga</li>
+                    <li>El open source</li>
+                    <li>La poesía</li>
+                    <li>Música</li>
+                    <li>Literatura en general</li>
+                </ul>
+            </div>
         </div>
 
         <div class="links">
             <a href="https://tkz.one/@nubesurrealista" class="link"><i class="fab fa-mastodon"></i> Mastodon</a>
             <a href="https://t.me/surrealcloud" class="link"><i class="fab fa-telegram"></i> Telegram</a>
             <a href="https://bsky.app/profile/nubesurrealista.tkz.one.ap.brid.gy" class="link"><i class="fas fa-sky"></i> Bluesky (espejo)</a>
+            <a href="https://nubesurrealista.github.io/Toots/" class="link"><i class="fas fa-link"></i> Toots</a>
         </div>
 
         <div class="visits">
@@ -178,6 +192,7 @@
         function loadPage() {
             updateVisitCount();
             loadMessages();
+            clearOldMessages();
         }
 
         function updateVisitCount() {
@@ -207,6 +222,17 @@
                 localStorage.setItem('messages', JSON.stringify(messages));
                 messageInput.value = '';
                 loadMessages();
+            }
+        }
+
+        function clearOldMessages() {
+            const now = new Date();
+            const lastClear = localStorage.getItem('lastClear') || now.getTime();
+            const oneMonth = 1000 * 60 * 60 * 24 * 30;
+
+            if (now.getTime() - lastClear > oneMonth) {
+                localStorage.removeItem('messages');
+                localStorage.setItem('lastClear', now.getTime());
             }
         }
 
