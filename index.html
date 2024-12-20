@@ -10,30 +10,15 @@
     <link rel="stylesheet" href="https://unpkg.com/@catppuccin/palette/css/catppuccin.css">
     <style>
         :root {
-            --bg-color: var(--ctp-mocha-base);
-            --text-color: var(--ctp-mocha-text);
-            --link-bg: var(--ctp-mocha-surface0);
-            --link-hover: var(--ctp-mocha-surface2);
+            --bg-color-day: var(--ctp-latte-base);
+            --text-color-day: var(--ctp-latte-text);
+            --link-bg-day: var(--ctp-latte-surface0);
+            --link-hover-day: var(--ctp-latte-surface2);
 
-            --bg-color-mocha: var(--ctp-mocha-base);
-            --text-color-mocha: var(--ctp-mocha-text);
-            --link-bg-mocha: var(--ctp-mocha-surface0);
-            --link-hover-mocha: var(--ctp-mocha-surface2);
-
-            --bg-color-latte: var(--ctp-latte-base);
-            --text-color-latte: var(--ctp-latte-text);
-            --link-bg-latte: var(--ctp-latte-surface0);
-            --link-hover-latte: var(--ctp-latte-surface2);
-
-            --bg-color-frappe: var(--ctp-frappe-base);
-            --text-color-frappe: var(--ctp-frappe-text);
-            --link-bg-frappe: var(--ctp-frappe-surface0);
-            --link-hover-frappe: var(--ctp-frappe-surface2);
-
-            --bg-color-macchiato: var(--ctp-macchiato-base);
-            --text-color-macchiato: var(--ctp-macchiato-text);
-            --link-bg-macchiato: var(--ctp-macchiato-surface0);
-            --link-hover-macchiato: var(--ctp-macchiato-surface2);
+            --bg-color-night: var(--ctp-mocha-base);
+            --text-color-night: var(--ctp-mocha-text);
+            --link-bg-night: var(--ctp-mocha-surface0);
+            --link-hover-night: var(--ctp-mocha-surface2);
         }
 
         body {
@@ -119,24 +104,6 @@
         .social-link:hover {
             opacity: 1;
         }
-
-        .theme-selector {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #03dac6;
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .theme-selector select {
-            background: transparent;
-            color: white;
-            border: none;
-            outline: none;
-        }
     </style>
 </head>
 <body>
@@ -185,34 +152,25 @@
         </div>
     </div>
 
-    <div class="theme-selector">
-        <label for="themeSelect">Seleccionar Tema:</label>
-        <select id="themeSelect" onchange="changeTheme(this.value)">
-            <option value="mocha">Mocha</option>
-            <option value="latte">Latte</option>
-            <option value="frappe">Frappe</option>
-            <option value="macchiato">Macchiato</option>
-        </select>
-    </div>
-
     <script>
         function applyTheme(theme) {
             const root = document.documentElement;
-            root.style.setProperty('--bg-color', `var(--bg-color-${theme})`);
-            root.style.setProperty('--text-color', `var(--text-color-${theme})`);
-            root.style.setProperty('--link-bg', `var(--link-bg-${theme})`);
-            root.style.setProperty('--link-hover', `var(--link-hover-${theme})`);
-        }
-
-        function changeTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-            applyTheme(theme);
+            root.style.setProperty('--bg-color', theme === 'dark' ? 'var(--bg-color-night)' : 'var(--bg-color-day)');
+            root.style.setProperty('--text-color', theme === 'dark' ? 'var(--text-color-night)' : 'var(--text-color-day)');
+            root.style.setProperty('--link-bg', theme === 'dark' ? 'var(--link-bg-night)' : 'var(--link-bg-day)');
+            root.style.setProperty('--link-hover', theme === 'dark' ? 'var(--link-hover-night)' : 'var(--link-hover-day)');
         }
 
         function loadPage() {
             updateVisitCount();
             loadMessages();
             clearOldMessages();
+
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            applyTheme(darkModeMediaQuery.matches ? 'dark' : 'light');
+            darkModeMediaQuery.addEventListener('change', (e) => {
+                applyTheme(e.matches ? 'dark' : 'light');
+            });
         }
 
         function updateVisitCount() {
@@ -257,15 +215,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            applyTheme(darkModeMediaQuery.matches ? 'mocha' : 'latte');
-            darkModeMediaQuery.addEventListener('change', (e) => {
-                applyTheme(e.matches ? 'mocha' : 'latte');
-            });
-
-            loadPage();
-        });
+        document.addEventListener('DOMContentLoaded', loadPage);
     </script>
 </body>
 </html>
