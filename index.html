@@ -206,20 +206,7 @@
             const query = `
                 query ($username: String) {
                     User(name: $username) {
-                        id
-                        name
-                        avatar {
-                            large
-                        }
-                        statistics {
-                            anime {
-                                count
-                                meanScore
-                                minutesWatched
-                            }
-                        }
-                        activity(sort: [PINNED, ID_DESC], type: ANIME_LIST, page: 1, perPage: 1) {
-                            id
+                        activities(sort: [PINNED, ID_DESC], type: ANIME_LIST, page: 1, perPage: 1) {
                             ... on ListActivity {
                                 media {
                                     title {
@@ -229,9 +216,7 @@
                                         large
                                     }
                                     favourites
-                                    siteUrl
                                 }
-                                status
                             }
                         }
                     }
@@ -259,7 +244,7 @@
             try {
                 const response = await fetch(url, options);
                 const data = await response.json();
-                const activity = data.data.User.activity[0];
+                const activity = data.data.User.activities[0];
 
                 document.getElementById('anilist-cover').src = activity.media.coverImage.large;
                 document.getElementById('anilist-title').textContent = activity.media.title.romaji;
