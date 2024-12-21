@@ -206,9 +206,14 @@
             const query = `
                 query ($username: String) {
                     User(name: $username) {
-                        activities(sort: [PINNED, ID_DESC], type: ANIME_LIST, page: 1, perPage: 1) {
-                            ... on ListActivity {
-                                media {
+                        statistics {
+                            anime {
+                                count
+                            }
+                        }
+                        favourites {
+                            anime {
+                                nodes {
                                     title {
                                         romaji
                                     }
@@ -244,13 +249,20 @@
             try {
                 const response = await fetch(url, options);
                 const data = await response.json();
-                const activity = data.data.User.activities[0];
 
-                document.getElementById('anilist-cover').src = activity.media.coverImage.large;
-                document.getElementById('anilist-title').textContent = activity.media.title.romaji;
-                document.getElementById('anilist-likes').textContent = `Likes: ${activity.media.favourites}`;
+                if (data && data.data && data.data.User) {
+                    const user = data.data.User;
+                    const favouriteAnime = user.favourites.anime.nodes[0];
+
+                    document.getElementById('anilist-cover').src = favouriteAnime.coverImage.large;
+                    document.getElementById('anilist-title').textContent = favouriteAnime.title.romaji;
+                    document.getElementById('anilist-likes').textContent = `Likes: ${favouriteAnime.favourites}`;
+                } else {
+                    throw new Error('No data found');
+                }
             } catch (error) {
                 console.error('Error fetching AniList data:', error);
+                document.getElementById('anilist-title').textContent = "Error al cargar datos";
             }
         }
 
