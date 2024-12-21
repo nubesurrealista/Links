@@ -139,6 +139,11 @@
             font-size: 1.2em;
             color: var(--text-color);
         }
+
+        .card-progress {
+            font-size: 1em;
+            color: var(--text-color);
+        }
     </style>
 </head>
 <body>
@@ -189,7 +194,8 @@
         <div class="card" id="anilist-card">
             <img id="anilist-cover" src="" alt="Cover Image">
             <div class="card-title" id="anilist-title">Cargando...</div>
-            <div class="card-likes" id="anilist-likes">Likes: 0</div>
+            <div class="card-likes" id="anilist-likes"></div>
+            <div class="card-progress" id="anilist-progress"></div>
         </div>
     </div>
 
@@ -206,21 +212,17 @@
             const query = `
                 query ($username: String) {
                     User(name: $username) {
-                        statistics {
-                            anime {
-                                count
-                            }
-                        }
-                        favourites {
-                            anime {
-                                nodes {
+                        activities(perPage: 1, sort: [ID_DESC]) {
+                            ... on ListActivity {
+                                status
+                                progress
+                                media {
                                     title {
                                         romaji
                                     }
                                     coverImage {
                                         large
                                     }
-                                    favourites
                                 }
                             }
                         }
@@ -250,13 +252,21 @@
                 const response = await fetch(url, options);
                 const data = await response.json();
 
-                if (data && data.data && data.data.User) {
-                    const user = data.data.User;
-                    const favouriteAnime = user.favourites.anime.nodes[0];
+                if (data && data.data && data.data.User && data.data.User.activities.length > 0) {
+                    const activity = data.data.User.activities[0];
+                    const statusMap = {
+                        'completed': 'ha completado',
+                        'watching': 'está viendo',
+                        'reading': 'está leyendo',
+                        'paused': 'ha pausado',
+                        'dropped': 'ha abandonado'
+                    };
 
-                    document.getElementById('anilist-cover').src = favouriteAnime.coverImage.large;
-                    document.getElementById('anilist-title').textContent = favouriteAnime.title.romaji;
-                    document.getElementById('anilist-likes').textContent = `Likes: ${favouriteAnime.favourites}`;
+                    const status = statusMap[activity.status] || 'ha actualizado su actividad en';
+
+                    document.getElementById('anilist-cover').src = activity.media.coverImage.large;
+                    document.getElementById('anilist-title').textContent = `${status} ${activity.media.title.romaji}`;
+                    document.getElementById('anilist-progress').textContent = `Progreso: ${activity.progress}`;
                 } else {
                     throw new Error('No data found');
                 }
