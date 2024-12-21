@@ -330,28 +330,20 @@
             }
         }
 
-        function loadPage() {
-            updateVisitCount();
-            loadMessages();
-            clearOldMessages();
-            fetchAniListData();
+        async function updateVisitCount() {
+            const response = await fetch('https://api.countapi.xyz/hit/nubesurrealista.github.io/Links');
+            const data = await response.json();
+            document.getElementById('visitCount').textContent = data.value;
+        }
 
-            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            applyTheme(darkModeMediaQuery.matches ? 'dark' : 'light');
-            darkModeMediaQuery.addEventListener('change', (e) => {
-                applyTheme(e.matches ? 'dark' : 'light');
+        async function loadMessages() {
+            const response = await fetch('https://api.jsonbin.io/v3/b/67674a0facd3cb34a8bd80aa/latest', {
+                headers: {
+                    'X-Master-Key': '$2a$10$UPFRIntqq8X1JdAOg8vh7.Bb0SKYt6Xv8sSFsxnccEA8ipxLge67'
+                }
             });
-        }
-
-        function updateVisitCount() {
-            let visitCount = localStorage.getItem('visitCount') || 0;
-            visitCount = parseInt(visitCount) + 1;
-            localStorage.setItem('visitCount', visitCount);
-            document.getElementById('visitCount').textContent = visitCount;
-        }
-
-        function loadMessages() {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const data = await response.json();
+            const messages = data.record.messages || [];
             const messageList = document.getElementById('messageList');
             messageList.innerHTML = '';
             messages.forEach((message, index) => {
@@ -361,28 +353,41 @@
             });
         }
 
-        function submitMessage() {
+        async function submitMessage() {
             const messageInput = document.getElementById('messageInput');
             const message = messageInput.value.trim();
             if (message) {
-                let messages = JSON.parse(localStorage.getItem('messages')) || [];
+                const response = await fetch('https://api.jsonbin.io/v3/b/67674a0facd3cb34a8bd80aa/latest', {
+                    headers: {
+                        'X-Master-Key': '$2a$10$UPFRIntqq8X1JdAOg8vh7.Bb0SKYt6Xv8sSFsxnccEA8ipxLge67'
+                    }
+                });
+                const data = await response.json();
+                const messages = data.record.messages || [];
                 messages.push(message);
-                localStorage.setItem('messages', JSON.stringify(messages));
-                localStorage.setItem('lastMessageTime', new Date().getTime());
+                await fetch('https://api.jsonbin.io/v3/b/67674a0facd3cb34a8bd80aa', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': '$2a$10$UPFRIntqq8X1JdAOg8vh7.Bb0SKYt6Xv8sSFsxnccEA8ipxLge67'
+                    },
+                    body: JSON.stringify({ messages })
+                });
                 messageInput.value = '';
                 loadMessages();
             }
         }
 
-        function clearOldMessages() {
-            const now = new Date().getTime();
-            const lastClear = localStorage.getItem('lastClear') || now;
-            const oneMonth = 1000 * 60 * 60 * 24 * 30;
+        function loadPage() {
+            updateVisitCount();
+            loadMessages();
+            fetchAniListData();
 
-            if (now - lastClear > oneMonth) {
-                localStorage.removeItem('messages');
-                localStorage.setItem('lastClear', now);
-            }
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            applyTheme(darkModeMediaQuery.matches ? 'dark' : 'light');
+            darkModeMediaQuery.addEventListener('change', (e) => {
+                applyTheme(e.matches ? 'dark' : 'light');
+            });
         }
 
         document.addEventListener('DOMContentLoaded', loadPage);
