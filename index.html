@@ -176,21 +176,6 @@
             <a href="https://github.com/nubesurrealista" class="link" aria-label="GitHub"><i class="fab fa-github"></i> GitHub</a>
         </div>
 
-        <div class="visits">
-            <p>Visitas: <span id="visitCount">0</span></p>
-        </div>
-
-        <div class="message-form">
-            <h5>Deja un mensaje anónimo</h5>
-            <textarea id="messageInput" rows="3" placeholder="Escribe tu mensaje aquí..."></textarea>
-            <button class="btn" onclick="submitMessage()">Enviar</button>
-        </div>
-
-        <div class="message-list">
-            <h5>Mensajes</h5>
-            <ul id="messageList"></ul>
-        </div>
-
         <div class="card" id="anilist-card" aria-live="polite">
             <img id="anilist-cover" src="" alt="Imagen de portada">
             <div class="card-title" id="anilist-title">Cargando...</div>
@@ -331,9 +316,6 @@
         }
 
         function loadPage() {
-            updateVisitCount();
-            loadMessages();
-            clearOldMessages();
             fetchAniListData();
 
             const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -341,48 +323,6 @@
             darkModeMediaQuery.addEventListener('change', (e) => {
                 applyTheme(e.matches ? 'dark' : 'light');
             });
-        }
-
-        function updateVisitCount() {
-            let visitCount = localStorage.getItem('visitCount') || 0;
-            visitCount = parseInt(visitCount) + 1;
-            localStorage.setItem('visitCount', visitCount);
-            document.getElementById('visitCount').textContent = visitCount;
-        }
-
-        function loadMessages() {
-            const messages = JSON.parse(localStorage.getItem('messages')) || [];
-            const messageList = document.getElementById('messageList');
-            messageList.innerHTML = '';
-            messages.forEach((message, index) => {
-                const listItem = document.createElement('li');
-                listItem.textContent = message;
-                messageList.appendChild(listItem);
-            });
-        }
-
-        function submitMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-            if (message) {
-                let messages = JSON.parse(localStorage.getItem('messages')) || [];
-                messages.push(message);
-                localStorage.setItem('messages', JSON.stringify(messages));
-                localStorage.setItem('lastMessageTime', new Date().getTime());
-                messageInput.value = '';
-                loadMessages();
-            }
-        }
-
-        function clearOldMessages() {
-            const now = new Date().getTime();
-            const lastClear = localStorage.getItem('lastClear') || now;
-            const oneMonth = 1000 * 60 * 60 * 24 * 30;
-
-            if (now - lastClear > oneMonth) {
-                localStorage.removeItem('messages');
-                localStorage.setItem('lastClear', now);
-            }
         }
 
         document.addEventListener('DOMContentLoaded', loadPage);
